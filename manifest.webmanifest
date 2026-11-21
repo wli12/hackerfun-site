@@ -1,0 +1,14 @@
+{
+  "name": "HackerFun",
+  "short_name": "HackerFun",
+  "description": "B站上有深度的 UP主：近三年的百大加一份口碑精选名单，每天更新。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#fb7299",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
