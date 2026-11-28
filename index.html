@@ -1,0 +1,1085 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HackerFun</title>
+<meta name="description" content="B站上有深度的 UP主：近三年的百大，加上一份从 V2EX、知乎、豆瓣等社区的公开推荐里挑出来的精选名单。每位都标了深度星级，每天更新。">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="HackerFun">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23fb7299'/%3E%3Ctext x='16' y='23.5' text-anchor='middle' font-family='Helvetica,Arial,sans-serif' font-weight='700' font-size='22' fill='white'%3EH%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #ffffff; --bg2: #f2f2f2; --bg3: #e5e5e5; --text: #0f0f0f; --muted: #606060;
+    --accent: #fb7299; --link: #065fd4; --hover: rgba(0,0,0,.05);
+    --chip-on: #0f0f0f; --chip-on-text: #ffffff; --t1: #0a8043; --t2: #b06000; --t3: #606060;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f0f0f; --bg2: #272727; --bg3: #3f3f3f; --text: #f1f1f1; --muted: #aaaaaa;
+      --link: #3ea6ff; --hover: rgba(255,255,255,.08);
+      --chip-on: #f1f1f1; --chip-on-text: #0f0f0f; --t1: #4cc38a; --t2: #f0b354; --t3: #aaaaaa;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f0f0f; --bg2: #272727; --bg3: #3f3f3f; --text: #f1f1f1; --muted: #aaaaaa;
+    --link: #3ea6ff; --hover: rgba(255,255,255,.08);
+    --chip-on: #f1f1f1; --chip-on-text: #0f0f0f; --t1: #4cc38a; --t2: #f0b354; --t3: #aaaaaa;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body { font: 14px/1.4 Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", -apple-system, Arial, sans-serif; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
+  svg { width: 24px; height: 24px; fill: currentColor; flex: none; }
+  h1, h2, h3, h4, p { margin: 0; }
+
+  /* top bar */
+  .top { position: fixed; inset: 0 0 auto 0; height: 56px; z-index: 10; background: var(--bg);
+         display: flex; align-items: center; justify-content: space-between; padding: 0 16px; gap: 16px; }
+  .left, .right { display: flex; align-items: center; flex: none; }
+  .left { gap: 12px; }
+  .icon { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; }
+  .icon:hover { background: var(--hover); }
+  .brand { font-weight: 700; font-size: 20px; letter-spacing: -.8px; white-space: nowrap; }
+  .brand b { color: var(--accent); }
+  .search { flex: 0 1 640px; display: flex; min-width: 0; }
+  .search input { flex: 1; min-width: 0; height: 40px; padding: 0 16px; font: inherit; font-size: 16px; color: var(--text);
+                  background: var(--bg); border: 1px solid var(--bg3); border-right: 0; border-radius: 40px 0 0 40px; outline: none; }
+  .search input:focus { border-color: var(--link); }
+  .search button { width: 64px; height: 40px; border: 1px solid var(--bg3); background: var(--bg2);
+                   border-radius: 0 40px 40px 0; display: grid; place-items: center; }
+
+  /* sidebar */
+  .side { position: fixed; top: 56px; bottom: 0; left: 0; width: 240px; overflow-y: auto; padding: 12px; background: var(--bg); z-index: 9; }
+  .side a { display: flex; align-items: center; gap: 24px; height: 40px; padding: 0 12px; border-radius: 10px; }
+  .side a:hover { background: var(--hover); }
+  .side a.on { background: var(--bg2); font-weight: 500; }
+  .side hr { border: 0; border-top: 1px solid var(--bg3); margin: 12px 0; }
+  .side h4 { padding: 6px 12px; font-size: 16px; font-weight: 500; }
+  .side .area { gap: 8px; justify-content: space-between; }
+  .side .area span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .side .foot { padding: 12px; color: var(--muted); font-size: 12px; line-height: 18px; }
+  .count { color: var(--muted); font-size: 12px; font-weight: 400; }
+  body.collapsed .side { width: 72px; padding: 4px; }
+  body.collapsed .side a { flex-direction: column; gap: 4px; height: 74px; justify-content: center; font-size: 10px; padding: 0; }
+  body.collapsed .side .areas-nav { display: none; }
+  .scrim { display: none; }
+  main { margin-left: 240px; padding: 56px 24px 48px; min-height: 100vh; }
+  body.collapsed main { margin-left: 72px; }
+  /* watch page: no sidebar, like YouTube and Bilibili; the menu button slides it in over the page */
+  body.watching main, body.watching.collapsed main { margin-left: 0; }
+  body.watching .side, body.watching.collapsed .side { transform: translateX(-100%); transition: transform .2s; width: 240px; padding: 12px; }
+  body.watching.drawer .side { transform: none; box-shadow: 0 0 24px rgba(0,0,0,.3); }
+  body.watching.collapsed .side a { flex-direction: row; height: 40px; font-size: 14px; padding: 0 12px; justify-content: flex-start; gap: 24px; }
+  body.watching.collapsed .side .areas-nav { display: block; }
+  body.watching.drawer .scrim { display: block; position: fixed; inset: 56px 0 0 0; background: rgba(0,0,0,.4); z-index: 8; }
+
+  /* chips, pills, filter bar */
+  .chip { flex: none; height: 32px; padding: 0 12px; border-radius: 8px; background: var(--bg2); font-weight: 500;
+          white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+  .chip:hover { background: var(--bg3); }
+  .chip.on { background: var(--chip-on); color: var(--chip-on-text); }
+  .chip .ava { width: 20px; height: 20px; font-size: 10px; margin-left: -4px; }
+  .pill { height: 36px; padding: 0 16px; border-radius: 18px; background: var(--bg2); font-weight: 500;
+          display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .pill:hover, .pill.on { background: var(--bg3); }
+  .pill.pri { background: var(--text); color: var(--bg); }
+  .pill svg { width: 20px; height: 20px; }
+  .pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filterbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-top: 16px; }
+  .filterbar .chip span { font-size: 16px; line-height: 1; opacity: .7; }
+  .filterbar .grow { flex: 1; }
+  /* filters: a row of dropdowns; each button shows what is picked in it */
+  .filterbar { position: relative; }          /* the open dropdown hangs below the whole row, so it never covers the other buttons */
+  .ddwrap { display: inline-flex; }
+  .pill.dd svg { width: 18px; height: 18px; margin: 0 -6px 0 -2px; opacity: .7; fill: currentColor; transition: transform .15s; }
+  .pill.dd.open svg { transform: rotate(180deg); }
+  .pill.dd.on { background: var(--chip-on); color: var(--chip-on-text); }
+  .box { width: 18px; height: 18px; border: 2px solid var(--muted); border-radius: 4px; flex: none; display: inline-grid; place-items: center;
+         font-size: 12px; font-weight: 700; line-height: 1; }
+  .box.on { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .box.on::after { content: "✓"; }
+  .box.part::after { content: "–"; }
+  .box.radio { border-radius: 50%; }
+  .box.radio.on { background: var(--text); box-shadow: inset 0 0 0 3px var(--bg); }
+  .box.radio.on::after { content: ""; }
+  .ddmenu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; min-width: 220px; width: max-content; max-width: min(340px, calc(100vw - 16px));
+            max-height: min(62vh, 560px); overflow-y: auto; padding: 6px; background: var(--bg); border: 1px solid var(--bg3); border-radius: 12px;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, .2); font-weight: 400; }
+  .ddmenu .opt { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border-radius: 8px; text-align: left; white-space: nowrap; }
+  .ddmenu .opt:hover { background: var(--bg2); }
+  .ddmenu .opt.on { font-weight: 500; }
+  .ddmenu .optrow { display: flex; align-items: center; }
+  .ddmenu .optrow .opt { flex: 1; width: auto; }
+  .ddmenu .exp { width: 36px; height: 36px; flex: none; border-radius: 8px; color: var(--muted); font-size: 20px; transition: transform .15s; }
+  .ddmenu .exp:hover { background: var(--bg2); }
+  .ddmenu .exp.open { transform: rotate(90deg); }
+  .ddmenu .subopts { margin: 0 0 4px 18px; padding-left: 8px; border-left: 2px solid var(--bg3); }
+  .ddmenu hr { border: 0; border-top: 1px solid var(--bg3); margin: 6px 4px; }
+  .catwrap { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 12px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex: none; display: inline-block; }
+  .d1 { background: var(--t1); } .d2 { background: var(--t2); } .d3 { background: var(--t3); }
+
+  /* video grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 40px 16px; padding-top: 16px; }
+  .vcard { display: block; min-width: 0; }
+  .thumb { position: relative; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; background: var(--bg2); }
+  .thumb img { position: relative; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .thumb .ph { position: absolute; inset: 0; display: flex; align-items: flex-end; padding: 12px; color: #fff; font-weight: 700; font-size: 15px; }
+  .dur { position: absolute; right: 8px; bottom: 8px; background: rgba(0,0,0,.8); color: #fff; font-size: 12px; font-weight: 500;
+         padding: 1px 4px; border-radius: 4px; }
+  .prog { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255,255,255,.45); }   /* how much has been watched */
+  .prog i { display: block; height: 100%; background: var(--accent); }
+  .pay-tag { position: absolute; left: 8px; bottom: 8px; background: rgba(0,0,0,.8); color: #ffd666; font-size: 12px; font-weight: 500; padding: 1px 6px; border-radius: 4px; }
+  .paynote { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: var(--bg2); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .paynote span { flex: 1 1 220px; }
+  .done-tag { position: absolute; left: 8px; top: 8px; background: rgba(0,0,0,.8); color: #fff; font-size: 12px; font-weight: 500; padding: 1px 6px; border-radius: 4px; }
+  /* the menu a long press on a video opens, and the note with "undo" that follows */
+  .cmenu-back { position: fixed; inset: 0; z-index: 60; background: rgba(0, 0, 0, .25); }
+  .cmenu { position: fixed; min-width: 240px; max-width: min(340px, calc(100vw - 24px)); padding: 6px; background: var(--bg); border: 1px solid var(--bg3);
+           border-radius: 12px; box-shadow: 0 8px 28px rgba(0, 0, 0, .3); }
+  .cmenu .cm-title { padding: 8px 10px; color: var(--muted); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cmenu button { display: block; width: 100%; padding: 12px 10px; border-radius: 8px; text-align: left; font-size: 15px; }
+  .cmenu button:hover { background: var(--bg2); }
+  .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 70; display: flex; align-items: center; gap: 16px; max-width: calc(100vw - 24px);
+           padding: 12px 16px; border-radius: 10px; background: var(--chip-on); color: var(--chip-on-text); box-shadow: 0 6px 20px rgba(0, 0, 0, .3); }
+  .toast button { color: inherit; font-weight: 700; text-decoration: underline; white-space: nowrap; }
+  @media (pointer: coarse) {   /* so that a long press reaches the page instead of the browser's link preview or text selection */
+    [data-live] a, .secondary a.next { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+  }
+  .later-btn { position: absolute; top: 6px; right: 6px; width: 30px; height: 30px; border-radius: 4px; background: rgba(0,0,0,.8);
+               color: #fff; display: none; place-items: center; cursor: pointer; }
+  .later-btn svg { width: 20px; height: 20px; }
+  a:hover .later-btn, .later-btn.on { display: grid; }
+  .info { display: flex; gap: 12px; padding-top: 12px; }
+  .ava { flex: none; border-radius: 50%; overflow: hidden; background: var(--bg3); display: grid; place-items: center;
+         color: #fff; font-weight: 700; width: 36px; height: 36px; font-size: 15px; }
+  .ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vt { margin: 0 0 4px; font-size: 16px; font-weight: 500; line-height: 22px;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .sub { color: var(--muted); font-size: 14px; line-height: 20px; }
+  .sub a:hover { color: var(--text); }
+  .status { color: var(--muted); padding: 48px 0; text-align: center; }
+
+  /* page heads */
+  .pagehead h2 { font-size: 24px; margin: 16px 0 0; }
+  .pagehead .sub { margin-top: 4px; }
+  .crumb { display: inline-block; margin-top: 16px; color: var(--muted); }
+  .crumb:hover { color: var(--text); }
+  .crumb + h2 { margin-top: 2px; }
+  .sechead { font-size: 20px; font-weight: 700; margin: 28px 0 2px; display: flex; align-items: center; gap: 8px; }
+  .sechead + .sub { margin-bottom: 14px; }
+  .sechead .chip { font-size: 14px; }
+
+  /* categories page */
+  .areas { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-top: 16px; }
+  .areacard { background: var(--bg2); border-radius: 12px; padding: 14px 16px; }
+  .areaname { display: flex; align-items: center; font-weight: 600; font-size: 16px; margin-bottom: 6px; }
+  .areaname .count, .cats .count { margin-left: auto; padding-left: 8px; }
+  .cats a { display: flex; align-items: center; padding: 6px 0; color: var(--muted); flex: 1; min-width: 0; }
+  .cats a:hover, .areaname a:hover { color: var(--text); text-decoration: underline; }
+  .cats .count { margin-left: 8px; padding-left: 0; }
+  .catrow { display: flex; align-items: center; gap: 12px; }
+  .catrow.off a { opacity: .45; text-decoration: line-through; }
+  .areaname { gap: 8px; } .areaname .count { margin-left: 0; padding-left: 0; font-weight: 400; }
+  .areaname .chip { margin-left: auto; height: 26px; font-size: 12px; background: var(--bg3); }
+
+  /* list rows */
+  .results { display: flex; flex-direction: column; gap: 16px; padding-top: 16px; max-width: 1100px; }
+  .srow { display: flex; gap: 16px; }
+  .srow .thumb { width: 360px; flex: none; }
+  .srow .vt { font-size: 18px; line-height: 26px; font-weight: 400; }
+  .srow .chan { display: flex; align-items: center; gap: 8px; margin: 12px 0; color: var(--muted); }
+  .srow .chan .ava { width: 24px; height: 24px; font-size: 11px; }
+  .snip { color: var(--muted); font-size: 12px; line-height: 18px; }
+
+  /* creators */
+  .ugrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 8px 16px; padding-top: 4px; }
+  .urow { display: flex; gap: 16px; padding: 12px; border-radius: 12px; align-items: flex-start; min-width: 0; }
+  .urow:hover { background: var(--hover); }
+  .urow.off { opacity: .5; }
+  .urow .ava { width: 64px; height: 64px; font-size: 24px; }
+  .urow b { font-size: 16px; font-weight: 500; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .urow .why { color: var(--muted); font-size: 13px; line-height: 18px; margin-top: 4px;
+               display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .tier { font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .tier.t1 { color: var(--t1); } .tier.t2 { color: var(--t2); } .tier.t3 { color: var(--t3); }
+  .stars { letter-spacing: 1px; font-size: 12px; }
+  .stars.t1 { color: var(--t1); } .stars.t2 { color: var(--t2); } .stars.t3 { color: var(--t3); }
+  .chip.on .stars { color: inherit; }
+  .chead { display: flex; gap: 24px; align-items: center; padding: 24px 0 8px; flex-wrap: wrap; }
+  .chead .ava { width: 120px; height: 120px; font-size: 44px; }
+  .chead h2 { font-size: 32px; line-height: 40px; }
+  .chead .why { margin: 8px 0 12px; max-width: 720px; line-height: 22px; }
+
+  /* subscriptions */
+  .subs { max-width: 900px; }
+  .addbox { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 4px; }
+  .addbox input { flex: 1 1 260px; min-width: 0; height: 36px; padding: 0 14px; font: inherit; color: var(--text); background: var(--bg);
+                  border: 1px solid var(--bg3); border-radius: 18px; outline: none; }
+  .addbox input:focus { border-color: var(--link); }
+  .srowu { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 12px; }
+  .srowu.off .ava, .srowu.off .grow { opacity: .45; }
+  .srowu .switch { margin-top: 10px; }
+  .setting { display: flex; align-items: flex-start; gap: 16px; max-width: 720px; margin-top: 20px; padding: 16px; border: 1px solid var(--bg3); border-radius: 12px; }
+  .setting > div { flex: 1; min-width: 0; }
+  .setting p { margin: 8px 0 0; color: var(--muted); line-height: 1.6; }
+  .setting .switch { margin-top: 2px; }
+  .srowu .sub { display: block; }
+  .two { display: block; font-size: 13px; line-height: 19px; margin-top: 2px; }
+  .two.why { color: var(--muted); margin-top: 0; }
+  .srowu:hover { background: var(--hover); }
+  .srowu .ava { width: 40px; height: 40px; }
+  .srowu .grow { flex: 1; min-width: 0; }
+  .srowu b { font-weight: 500; font-size: 15px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .switch { position: relative; flex: none; width: 36px; height: 20px; }
+  .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1; }
+  .switch .knob { position: absolute; inset: 0; border-radius: 10px; background: var(--bg3); transition: background .15s; }
+  .switch .knob::after { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%;
+                         background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3); transition: transform .15s; }
+  .switch input:checked + .knob { background: var(--link); }
+  .switch input:checked + .knob::after { transform: translateX(16px); }
+  .switch input:focus-visible + .knob { outline: 2px solid var(--link); outline-offset: 2px; }
+
+  /* watch page */
+  .watch { display: flex; gap: 24px; padding-top: 24px; max-width: 1754px; margin: 0 auto; }
+  .primary { flex: 1; min-width: 0; }
+  .secondary { width: 402px; flex: none; }
+  .player { aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; background: #000; }
+  .player iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .poster { position: relative; width: 100%; height: 100%; display: block; }
+  .poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .poster .play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 68px; height: 48px;
+                  border-radius: 14px; background: rgba(0,0,0,.7); display: grid; place-items: center; transition: background .15s; }
+  .poster:hover .play { background: var(--accent); }
+  .poster .play svg { width: 32px; height: 32px; color: #fff; }
+  .watch h1 { font-size: 20px; line-height: 28px; font-weight: 700; margin: 12px 0 8px; }
+  .owner { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .owner .who { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .owner .who .ava { width: 40px; height: 40px; }
+  .owner .who b { font-size: 16px; font-weight: 500; display: block; }
+  .desc { background: var(--bg2); border-radius: 12px; padding: 12px; margin-top: 12px; line-height: 20px; }
+  .desc .top-line { font-weight: 500; margin-bottom: 6px; }
+  .desc p { margin: 0 0 10px; }
+  .desc .why { color: var(--muted); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-size: 12px; padding: 2px 8px; border-radius: 6px; background: var(--bg3); font-weight: 500; }
+  .secondary h3 { font-size: 16px; margin: 0 0 12px; }
+  .next { display: flex; gap: 8px; margin-bottom: 8px; }
+  .next .thumb { width: 168px; flex: none; border-radius: 8px; }
+  .next .vt { font-size: 14px; line-height: 20px; }
+  .next .sub { font-size: 12px; line-height: 18px; }
+
+  .about { max-width: 720px; margin: 0 auto; padding: 24px 0 48px; font-size: 15px; line-height: 1.7; }
+  .about h1 { font-size: 32px; letter-spacing: -.5px; margin: 8px 0; }
+  .about .lede { font-size: 18px; color: var(--muted); margin-bottom: 24px; }
+  .about h2 { font-size: 20px; margin: 32px 0 8px; }
+  .about p, .about ul { margin: 0 0 12px; }
+  .about a { color: var(--link); }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+  .stat { background: var(--bg2); border-radius: 12px; padding: 14px 16px; }
+  .stat b { display: block; font-size: 24px; letter-spacing: -.5px; }
+  .stat span { color: var(--muted); font-size: 13px; }
+
+  @media (max-width: 1100px) { .watch { flex-direction: column; } .secondary { width: 100%; } }
+  @media (max-width: 800px) {
+    main, body.collapsed main { margin-left: 0; padding: 56px 16px 32px; }
+    .side, body.collapsed .side { transform: translateX(-100%); transition: transform .2s; width: 240px; padding: 12px; }
+    body.drawer .side { transform: none; box-shadow: 0 0 24px rgba(0,0,0,.3); }
+    body.collapsed .side a { flex-direction: row; height: 40px; font-size: 14px; padding: 0 12px; justify-content: flex-start; gap: 24px; }
+    body.collapsed .side .areas-nav { display: block; }
+    body.drawer .scrim { display: block; position: fixed; inset: 56px 0 0 0; background: rgba(0,0,0,.4); z-index: 8; }
+    .top { gap: 8px; padding: 0 8px 0 4px; } .left { gap: 4px; }
+    .brand { font-size: 17px; letter-spacing: -.6px; }
+    .search input { padding: 0 12px; } .search button { width: 44px; }
+    .icon { width: 34px; }
+    .grid { grid-template-columns: 1fr; gap: 24px; }
+    .srow { flex-direction: column; gap: 8px; } .srow .thumb { width: 100%; }
+    .ugrid { grid-template-columns: 1fr; }
+    .watch { padding-top: 0; margin: 0 -16px; } .player { border-radius: 0; }
+    .primary > :not(.player):not(.desc):not(.paynote), .secondary { padding-left: 16px; padding-right: 16px; }
+    .desc, .paynote { margin: 12px 16px 0; }
+    .chead { gap: 16px; } .chead .ava { width: 72px; height: 72px; font-size: 28px; } .chead h2 { font-size: 24px; line-height: 30px; }
+  }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="left">
+    <button class="icon" id="menu" aria-label="菜单"><svg viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg></button>
+    <a class="brand" href="#/" aria-label="HackerFun 首页">Hacker<b>Fun</b></a>
+  </div>
+  <form class="search" id="search" role="search">
+    <input id="q" type="search" placeholder="搜索视频、UP主、分类" autocomplete="off" aria-label="搜索">
+    <button aria-label="搜索"><svg viewBox="0 0 24 24"><path d="M20.87 20.17l-5.59-5.59A6.95 6.95 0 0 0 17 10a7 7 0 1 0-7 7c1.75 0 3.35-.64 4.58-1.71l5.59 5.59.7-.71zM10 16a6 6 0 1 1 0-12 6 6 0 0 1 0 12z"/></svg></button>
+  </form>
+  <div class="right">
+    <a class="icon" href="#/about" aria-label="关于" title="关于 HackerFun"><svg viewBox="0 0 24 24"><path d="M11 17h2v-6h-2v6zm1-15C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 9h2V7h-2v2z"/></svg></a>
+    <button class="icon" id="theme" aria-label="切换明暗"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.39 5.39 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg></button>
+  </div>
+</header>
+<nav class="side" id="side"></nav>
+<div class="scrim" id="scrim"></div>
+<main id="view"><div class="status">加载中…</div></main>
+
+<script>
+(function () {
+"use strict";
+const $ = (s, el = document) => el.querySelector(s);
+const view = $("#view");
+const store = {
+  get(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v ?? d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+};
+// The repository that takes subscription requests is not written into the page. The site owner opens
+// #/subs?repo=<owner>/<name> once on each device; that browser then remembers it and shows the add form.
+let REPO = store.get("hf_repo", "");
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+// depth: t is 1 (three stars) to 3 (one star)
+const STAR = { 1: "★★★", 2: "★★", 3: "★" };
+const TIER = { 1: "深度", 2: "有料", 3: "消遣" };
+const TIERHINT = { 1: "三星：博主本人功底很深，讲什么题材都有深度和质感", 2: "二星：有信息量、做得认真，以讲解、测评或教学为主", 3: "一星：以娱乐消遣为主" };
+const tl = (t) => `<span class="stars t${t}">${STAR[t]}</span>${TIER[t]}`;
+
+/* ---------- data ---------- */
+let HF, UPS = [], AREAS = [], FEED = [];
+const upById = new Map(), subById = new Map(), areaById = new Map(), feedByBv = new Map();
+const mk = (u, r) => ({ up: u, bv: r[0], t: r[1], pic: r[2], d: r[3], v: r[4], p: r[5], cid: r[6] > 0 ? r[6] : 0, co: !!r[7], pay: r[8] || 0, pv: r[9] || 0 });
+const full = new Map();   // creator id -> promise of every video
+const allOf = (u) => {
+  if (!u.mid) return Promise.resolve([]);
+  if (!full.has(u.id)) full.set(u.id, fetch(`data/u/${u.mid}.json`).then((r) => r.ok ? r.json() : { v: [] })
+    .then((d) => d.v.map((r) => mk(u, r))).catch(() => u.vids));
+  return full.get(u.id);
+};
+async function boot() {
+  const [idx, feed] = await Promise.all([fetch("data/index.json", { cache: "no-cache" }).then((r) => r.json()), fetch("data/feed.json", { cache: "no-cache" }).then((r) => r.json())]);
+  HF = idx; UPS = idx.ups; AREAS = idx.areas;
+  AREAS.forEach((a) => { areaById.set(a.id, a); a.subs.forEach((s) => subById.set(s.id, Object.assign(s, { area: a }))); });
+  UPS.forEach((u) => { upById.set(u.id, u); u.sub = subById.get(u.s) || AREAS[0].subs[0]; u.area = u.sub.area; u.vids = []; });
+  FEED = feed.v.map((r) => { const u = upById.get(r[0]); return u ? mk(u, r.slice(1)) : null; }).filter(Boolean);
+  FEED.forEach((v) => { v.up.vids.push(v); feedByBv.set(v.bv, v); });
+  // creators the site owner switched off by default: applied once per browser, so a visitor can still switch them back on
+  // the same "apply the owner's default once" rule serves creators (hf_off) and topics (hf_topics);
+  // a default the owner later withdraws is switched back on, unless it never came from the owner
+  const once = (key, seenKey, cur, defaults) => { const seen = store.get(seenKey, []);
+    const add = defaults.filter((id) => !seen.includes(id)), gone = seen.filter((id) => !defaults.includes(id));
+    if (!add.length && !gone.length) return cur;
+    const next = cur.filter((id) => !gone.includes(id)).concat(add.filter((id) => !cur.includes(id)));
+    store.set(key, next); store.set(seenKey, seen.filter((id) => !gone.includes(id)).concat(add)); return next; };
+  off = once("hf_off", "hf_offseen", off || [], UPS.filter((u) => u.off).map((u) => u.id));
+  topicsOff = once("hf_topics", "hf_topicseen", topicsOff, [...subById.values()].filter((x) => x.off).map((x) => x.id));
+  route();
+}
+
+/* ---------- state kept in this browser ---------- */
+let tiers = store.get("hf_tiers", [1]);           // which interest levels to show; saved only once the visitor picks, so a changed default leaves earlier choices alone
+let off = store.get("hf_off", null);              // creators switched off in the subscription list
+let later = store.get("hf_later2", []), seen = store.get("hf_seen2", []);
+/* watch progress, estimated: { bv: [seconds watched, when] }. Bilibili's embedded player does not tell the page where it is,
+   so the time the watch page stays in front after play is pressed is counted; pausing, seeking and speed are not seen. */
+let prog = store.get("hf_prog", {}), hideDone = store.get("hf_hidedone", true);
+const progOf = (bv) => (prog[bv] || [0])[0];
+const isDone = (v) => v.d > 0 && progOf(v.bv) >= v.d * 0.9;
+let hidden = new Set(store.get("hf_hidev", []));   // videos the visitor chose not to see, by a long press on the card
+const saveHidden = () => store.set("hf_hidev", [...hidden].slice(-3000));
+const shownAsNew = (v) => !hidden.has(v.bv) && (!hideDone || !isDone(v));   // hidden and finished videos are not recommended again
+function setProg(bv, sec) {
+  if (sec > 0) prog[bv] = [Math.round(sec), Math.round(Date.now() / 1000)]; else delete prog[bv];
+  const keys = Object.keys(prog);
+  if (keys.length > 3000) keys.sort((a, b) => prog[a][1] - prog[b][1]).slice(0, keys.length - 3000).forEach((k) => delete prog[k]);
+  store.set("hf_prog", prog);
+}   // saved videos, as small records
+let ownOnly = store.get("hf_own", false);         // hide videos another account uploaded with a listed creator only taking part
+let openMenu = "";                                // which filter dropdown is open
+const catExp = new Set();                        // areas unfolded in the category dropdown
+let topicsOff = store.get("hf_topics", []);       // topics (sub-categories) switched off on the 分类 page
+const isOn = (u) => !off.includes(u.id);
+const topicOn = (u) => !topicsOff.includes(u.s);
+// the short-video page keeps its own depth levels (two on to begin with); every other page shares the home page's (three-star only to begin with)
+let shortTiers = store.get("hf_stiers", [1, 2]);
+const onShorts = () => PATH === "/browse" && P.dur === "short";
+const tiersNow = () => onShorts() ? shortTiers : tiers;
+const tierOK = (u) => { const t = tiersNow(); return !t.length || t.length === 3 || t.includes(u.t); };
+const rec = (v) => ({ bv: v.bv, u: v.up.id, t: v.t, pic: v.pic, d: v.d, v: v.v, p: v.p, cid: v.cid || 0, co: v.co ? 1 : 0, pay: v.pay || 0, pv: v.pv || 0 });
+const unrec = (r) => { const u = upById.get(r.u); return u ? { up: u, bv: r.bv, t: r.t, pic: r.pic, d: r.d, v: r.v, p: r.p, cid: r.cid || 0, co: !!r.co, pay: r.pay || 0, pv: r.pv || 0 } : null; };
+
+/* ---------- formatting ---------- */
+const dur = (s) => { if (!s) return ""; const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60;
+  return h ? `${h}:${String(m).padStart(2, "0")}:${String(x).padStart(2, "0")}` : `${m}:${String(x).padStart(2, "0")}`; };
+const num = (n) => n >= 1e8 ? (n / 1e8).toFixed(1).replace(/\.0$/, "") + "亿" : n >= 1e4 ? (n / 1e4).toFixed(n >= 1e6 ? 0 : 1).replace(/\.0$/, "") + "万" : String(n);
+const views = (n) => n == null ? "" : num(n) + "次观看";
+const fans = (u) => u.f ? num(u.f) + " 粉丝" : "粉丝数见B站主页";
+function ago(ts) {
+  if (!ts) return "";
+  const s = Date.now() / 1000 - ts;
+  for (const [u, sec] of [["年", 31536000], ["个月", 2592000], ["周", 604800], ["天", 86400], ["小时", 3600], ["分钟", 60]]) {
+    const n = Math.floor(s / sec); if (n >= 1) return `${n}${u}前`; }
+  return "刚刚";
+}
+const hue = (s) => { let h = 0; for (const ch of String(s)) h = (h * 31 + ch.codePointAt(0)) % 360; return h; };
+const grad = (s) => `linear-gradient(135deg,hsl(${hue(s)} 45% 38%),hsl(${(hue(s) + 40) % 360} 50% 24%))`;
+const img = (path, size) => `https://i0.hdslb.com/bfs/${path}@${size}.webp`;
+// Bilibili's numeric video id (av) from the BV id
+const AVT = "FcwAPNKTMug3GV5Lj7EJnHpWsx4tb8haYeviqBz6rkCy12mUSDQX9RdoZf";
+const aid = (bv) => { try { const a = [...bv]; [a[3], a[9]] = [a[9], a[3]]; [a[4], a[7]] = [a[7], a[4]];
+  let t = 0n; for (const c of a.slice(3)) { const i = AVT.indexOf(c); if (i < 0) return ""; t = t * 58n + BigInt(i); }
+  return String((t & 2251799813685247n) ^ 23442827791579n); } catch (e) { return ""; } };
+const spaceUrl = (u) => u.mid ? `https://space.bilibili.com/${u.mid}` : `https://search.bilibili.com/upuser?keyword=${encodeURIComponent(u.n)}`;
+
+/* ---------- components ---------- */
+const CLOCK = '<svg viewBox="0 0 24 24"><path d="M14.97 16.95 10 13.87V7h2v5.76l4.03 2.49-1.06 1.7zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>';
+const CHECK = '<svg viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+const shown = new Map();   // videos currently on the page, so a click can save one for later
+const isLater = (bv) => later.some((r) => r.bv === bv);
+const laterBtn = (v) => { shown.set(v.bv, v); const on = isLater(v.bv);
+  return `<span class="later-btn ${on ? "on" : ""}" role="button" data-later="${v.bv}" title="${on ? "移出稍后再看" : "稍后再看"}">${on ? CHECK : CLOCK}</span>`; };
+const ava = (u) => { const letter = esc([...u.n.replace(/^[-_\s]+/, "")][0] || "?");
+  return `<span class="ava" style="background:${grad(u.n)}">${u.face ? `<img loading="lazy" referrerpolicy="no-referrer" src="${img(u.face, "160w_160h_1c")}" alt="" onerror="this.remove()">` : letter}</span>`; };
+const progBar = (v) => { const sec = progOf(v.bv); if (!sec || !v.d) return "";
+  return `${isDone(v) ? `<span class="done-tag">已看完</span>` : ""}<span class="prog"><i style="width:${Math.min(100, Math.max(2, sec / v.d * 100)).toFixed(1)}%"></i></span>`; };
+const thumb = (v) => `<div class="thumb" style="background:${grad(v.bv)}"><span class="ph">${esc(v.t)}</span>
+  ${v.pic ? `<img loading="lazy" referrerpolicy="no-referrer" src="${img(v.pic, "672w_378h_1c")}" alt="" onerror="this.remove()">` : ""}
+  ${laterBtn(v)}${v.pay ? `<span class="pay-tag">${v.pay === 1 ? "充电专属" : "付费"}</span>` : ""}<span class="dur">${dur(v.d)}</span>${progBar(v)}</div>`;
+const meta = (v) => [views(v.v), ago(v.p)].filter(Boolean).join(" • ");
+const wlink = (v) => `#/watch/${v.bv}/${v.up.id}`;
+const tierTag = (t) => `<span class="tier t${t}" title="${TIERHINT[t]}">${STAR[t]} ${TIER[t]}</span>`;
+
+const card = (v) => `<a class="vcard" href="${wlink(v)}">${thumb(v)}
+  <div class="info">${ava(v.up)}<div style="min-width:0"><h3 class="vt">${esc(v.t)}</h3>
+  <div class="sub">${esc(v.up.n)}${v.co ? " · 联合投稿" : ""}</div><div class="sub">${meta(v)}</div></div></div></a>`;
+const row = (v) => `<a class="srow" href="${wlink(v)}">${thumb(v)}<div style="min-width:0">
+  <h3 class="vt">${esc(v.t)}</h3><div class="sub">${meta(v)}</div>
+  <div class="chan">${ava(v.up)}${esc(v.up.n)}${v.co ? " · 联合投稿" : ""}</div><div class="snip">${esc(v.up.area.name)} › ${esc(v.up.sub.name)}</div></div></a>`;
+const next = (v) => `<a class="next" href="${wlink(v)}">${thumb(v)}<div style="min-width:0">
+  <h3 class="vt">${esc(v.t)}</h3><div class="sub">${esc(v.up.n)}</div><div class="sub">${meta(v)}</div></div></a>`;
+const yrs = (u) => u.y && u.y.length ? `百大 ${u.y.map((y) => "'" + String(y).slice(2)).join(" ")}` : "";   // the years this creator made the 百大 list
+const recAt = (u) => u.r && u.r.length ? `推荐见 ${u.r.join("、")}` : "";   // communities where people recommended this creator by name
+const two = (u) => `${u.d ? `<span class="two">${esc(u.d)}</span>` : ""}<span class="two why">${esc(u.w)}</span>`;
+const urow = (u) => `<a class="urow ${isOn(u) ? "" : "off"}" href="#/u/${u.id}">${ava(u)}<div style="min-width:0;flex:1">
+  <b>${esc(u.n)}</b><div class="sub">${tierTag(u.t)} · ${fans(u)} · ${esc(u.sub.name)}${isOn(u) ? "" : " · 已关闭"}</div>${two(u)}</div></a>`;
+const ustrip = (list) => list.length ? `<div class="catwrap">${[...list].sort((a, b) => a.t - b.t || (b.f || 0) - (a.f || 0))
+  .map((u) => `<a class="chip" href="#/u/${u.id}" title="${esc(u.w)}">${ava(u)}${esc(u.n)}</a>`).join("")}</div>` : "";
+
+/* ---------- filters: one button, the active ones as chips, a panel of options ---------- */
+const DATES = [["day", "24 小时内"], ["week", "7 天内"], ["month", "30 天内"], ["year", "一年内"]];
+const DURS = [["short", "5 分钟以内"], ["medium", "5–20 分钟"], ["long", "20–60 分钟"], ["xlong", "1 小时以上"]];
+const SORTS = [["", "最新发布"], ["views", "最多播放"]];
+const KEYS = ["date", "dur", "sort", "cat"];   // dur and cat can hold several values, separated by commas; cat mixes area ids and sub-category ids
+const catOf = (id) => areaById.get(id) || subById.get(id);
+let PATH = "/", P = {};
+const multi = (k) => (P[k] || "").split(",").filter(Boolean);
+// the lengths in force: the home page leaves out videos under 5 minutes unless lengths are ticked; ticking exactly those three is the same as the default
+const HOMEDURS = ["medium", "long", "xlong"];
+const dursNow = () => { const d = multi("dur").filter((x) => DUR[x]); return PATH === "/" && !d.length ? HOMEDURS : d; };
+const defDurs = (d) => PATH === "/" ? d.length === 3 && HOMEDURS.every((x) => d.includes(x)) : !d.length;
+const href = (path, params) => { const qs = new URLSearchParams(Object.entries(params).filter(([, v]) => v)).toString(); return "#" + path + (qs ? "?" + qs : ""); };
+function filterBar(withTier = true, withCat = false) {
+  const to = (k, v) => href(PATH, { ...P, [k]: v });
+  const flip = (k, v) => { const a = multi(k); return to(k, (a.includes(v) ? a.filter((x) => x !== v) : a.concat(v)).join(",")); };
+  const some = (names, unit) => names.length < 2 ? names[0] : names.length === 2 && names.join("").length <= 8 ? names.join("、") : `${names[0]} 等 ${names.length} ${unit}`;
+  const box = (on, part) => `<span class="box${on ? " on" : part ? " part" : ""}"></span>`;
+  const check = (url, on, label, extra = "") => `<a class="opt${on ? " on" : ""}" href="${url}" data-keep${extra}>${box(on)}${label}</a>`;   // stays open: more can be picked
+  const radio = (url, on, label) => `<a class="opt${on ? " on" : ""}" href="${url}"><span class="box radio${on ? " on" : ""}"></span>${label}</a>`;
+  const menus = [];   // [id, label on the button, highlighted, the options]
+  if (withCat) {
+    const cats = multi("cat").filter(catOf), set = (ids) => to("cat", ids.join(","));
+    const inArea = (a, x) => a.subs.some((y) => y.id === x), offT = (x) => topicsOff.includes(x.id);
+    // a whole area is stored as the area id and leaves out the topics switched off on the 分类 page, like everywhere else;
+    // anything else is stored as the list of ticked sub-categories
+    const shows = (a, x) => cats.includes(x.id) || (cats.includes(a.id) && !offT(x));
+    const whole = (a) => cats.includes(a.id) || a.subs.every((x) => cats.includes(x.id));
+    const rest = (a) => cats.filter((c) => c !== a.id && !inArea(a, c));
+    const areaLink = (a) => set(whole(a) ? rest(a) : rest(a).concat(a.id));
+    const subLink = (a, x) => {
+      const next = a.subs.filter((y) => y.id === x.id ? !shows(a, y) : shows(a, y));
+      return set(rest(a).concat(next.length && next.every((y) => !offT(y)) && a.subs.every((y) => offT(y) || next.includes(y)) ? [a.id] : next.map((y) => y.id)));
+    };
+    menus.push(["cat", cats.length ? esc(some(cats.map((c) => catOf(c).name), "类")) : "全部分类", cats.length > 0,
+      radio(to("cat", ""), !cats.length, "全部分类") + "<hr>" + AREAS.map((a) => {
+        const on = whole(a), part = !on && a.subs.some((x) => shows(a, x)), two = a.subs.length > 1, exp = two && catExp.has(a.id);
+        return `<div class="optrow"><a class="opt${on ? " on" : ""}" href="${areaLink(a)}" data-keep${two ? ` data-area="${a.id}"` : ""}>${box(on, part)}${esc(a.name)}</a>${
+          two ? `<button class="exp${exp ? " open" : ""}" data-exp="${a.id}" aria-label="${exp ? "收起" : "展开"}${esc(a.name)}的细分" aria-expanded="${exp}">›</button>` : ""}</div>${
+          exp ? `<div class="subopts">${a.subs.map((x) => check(subLink(a, x), shows(a, x), esc(x.name) + (topicsOff.includes(x.id) ? "（已关闭）" : ""))).join("")}</div>` : ""}`;
+      }).join("")]);
+  }
+  const date = DATES.find(([v]) => v === P.date);
+  menus.push(["date", date ? date[1] : "不限日期", !!date, radio(to("date", ""), !date, "不限日期") + DATES.map(([v, l]) => radio(to("date", v), P.date === v, l)).join("")]);
+  const durs = dursNow(), isDef = defDurs(durs), anyDur = PATH === "/" ? "默认长度" : "不限时长";
+  const flipDur = (v) => { const a = durs.includes(v) ? durs.filter((x) => x !== v) : durs.concat(v); return to("dur", defDurs(a) ? "" : a.join(",")); };
+  menus.push(["dur", isDef ? anyDur : some(DURS.filter(([v]) => durs.includes(v)).map(([, l]) => l), "项"), !isDef,
+    radio(to("dur", ""), isDef, anyDur) + "<hr>" + DURS.map(([v, l]) => check(flipDur(v), durs.includes(v), l)).join("")]);
+  // the depth levels stay as three chips that switch on and off, ahead of the dropdowns
+  const chips = withTier ? [1, 2, 3].map((t) =>
+    `<button class="chip ${tiersNow().includes(t) ? "on" : ""}" data-tier="${t}" title="${TIERHINT[t]}">${tl(t)}</button>`).join("") : "";
+  const sort = SORTS.find(([v]) => v === (P.sort || "")) || SORTS[0];
+  menus.push(["sort", sort[1], !!sort[0], SORTS.map(([v, l]) => radio(to("sort", v), sort[0] === v, l)).join("")]);
+  if (!menus.some((m) => m[0] === openMenu)) openMenu = "";
+  return `<div class="filterbar">${chips}${menus.map(([id, label, on, body]) => `<span class="ddwrap">
+      <button class="pill dd${on ? " on" : ""}${openMenu === id ? " open" : ""}" data-menu="${id}" aria-haspopup="true" aria-expanded="${openMenu === id}">${label}<svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>${
+      openMenu === id ? `<div class="ddmenu" id="ddmenu">${body}</div>` : ""}</span>`).join("")}</div>`;
+}
+/* keep the open dropdown inside the screen, and where it was scrolled to, after the page is drawn again */
+let menuScroll = 0;
+function placeMenu() {
+  const m = $("#ddmenu"); if (!m) return;
+  const bar = m.closest(".filterbar"), b = m.parentElement.querySelector("[data-menu]");
+  m.style.left = Math.max(0, Math.min(b.offsetLeft, bar.clientWidth - m.offsetWidth)) + "px";   // under its button, but inside the screen
+  m.scrollTop = menuScroll;
+}
+const DATE = { day: 86400, week: 604800, month: 2592000, year: 31536000 };
+const DUR = { short: [0, 300], medium: [300, 1200], long: [1200, 3600], xlong: [3600, 1e9] };
+function apply(list, withTier = true, anyTopic = false) {
+  const now = Date.now() / 1000;
+  const cats = multi("cat").filter(catOf), durs = dursNow();
+  const inCat = (u) => cats.includes(u.area.id) || cats.includes(u.sub.id);
+  // ticking a sub-category shows it even if that topic is switched off on the 分类 page
+  // withTier marks the recommendation lists (home, shorts, categories); the creator page shows everything
+  let r = list.filter((v) => (!withTier || shownAsNew(v)) && (!withTier || (isOn(v.up) && tierOK(v.up) && (anyTopic || topicOn(v.up) || cats.includes(v.up.sub.id)))) && (!ownOnly || !v.co)
+    && (!cats.length || inCat(v.up)) && (!P.date || !DATE[P.date] || now - v.p <= DATE[P.date])
+    && (!durs.length || durs.some((d) => v.d >= DUR[d][0] && v.d < DUR[d][1])));
+  if (P.sort === "views") r = [...r].sort((a, b) => b.v - a.v);
+  else r = [...r].sort((a, b) => b.p - a.p);
+  if (!withTier) return r;           // the creator page lists one creator: nothing to mix
+  const one = new Map();             // a joint upload is listed under each of its creators: show it once, under the uploader
+  for (const v of r) { const o = one.get(v.bv); if (!o || (o.co && !v.co)) one.set(v.bv, v); }
+  return spread(one.size === r.length ? r : r.filter((v) => one.get(v.bv) === v));
+}
+/* Keeps a list from showing screen after screen of one creator: of any 4 videos in a row, at most 2 are by the same
+   creator. The order is kept where the rule allows. A creator with more videos left than everyone else together
+   is taken whenever the rule allows, so the others are not used up early and the end of the list stays mixed too.
+   Only when one creator has more than half of a list does its end have to break the rule. */
+function spread(list) {
+  const q = new Map();   // creator -> [positions in list], h = how many are placed
+  list.forEach((v, i) => { let e = q.get(v.up); if (!e) q.set(v.up, e = { at: [], h: 0 }); e.at.push(i); });
+  const out = [], last = [];
+  for (let left = list.length; left > 0; left--) {
+    let big = null, first = null, any = null;
+    for (const [up, e] of q) {
+      const rem = e.at.length - e.h; if (!rem) continue;
+      if (!any || e.at[e.h] < any.at[any.h]) any = e;
+      if ((last[0] === up) + (last[1] === up) + (last[2] === up) >= 2) continue;   // would be the third of four
+      if (!big || rem > big.at.length - big.h) big = e;
+      if (!first || e.at[e.h] < first.at[first.h]) first = e;
+    }
+    const e = big && (big.at.length - big.h) * 2 > left ? big : first || any;
+    const v = list[e.at[e.h++]]; out.push(v); last.unshift(v.up); last.length = 3;
+  }
+  return out;
+}
+// how many videos from the start of a list keep that rule
+function mixed(list) {
+  for (let i = 3; i < list.length; i++) { const u = list[i].up; if ((list[i - 1].up === u) + (list[i - 2].up === u) + (list[i - 3].up === u) >= 2) return i; }
+  return list.length;
+}
+let pager = null, back = null;   // back: the place to return to while a page is drawn again (see "Going back" below)
+/* Draws a list a screenful at a time. `older`, when given, fetches the complete list once the first one runs out:
+   the page starts with the latest 30 videos of each creator, and scrolling past them brings in the earlier ones. */
+function paged(items, render = card, step = 36, older = null, live = false) {
+  if (pager) pager.disconnect();
+  const grid = $("#grid"); if (!grid) return;
+  const none = () => { grid.outerHTML = `<div class="status">没有符合条件的视频。试试多打开一个星级、放宽上面的筛选条件，或到「UP主」页多打开几位。</div>`; };
+  if (!items.length && !older) return none();
+  if (live) grid.dataset.live = "1";                   // a long press on these cards opens the "not interested" menu
+  const draw = live ? (v) => hidden.has(v.bv) || !isOn(v.up) ? "" : render(v) : render;   // hidden after the list was made
+  if (older) items = items.slice(0, mixed(items));   // an end that is all one creator waits to be mixed with the earlier videos
+  let n = 0, busy = false; const here = location.hash, want = back ? back.n : 0;   // want: as many as were drawn when the list was left
+  const sentinel = document.createElement("div"); grid.after(sentinel);
+  const near = () => sentinel.isConnected && sentinel.getBoundingClientRect().top < innerHeight + 800;
+  const more = async () => {
+    if (busy) return; busy = true;
+    if (n >= items.length && older) {
+      sentinel.className = "status"; sentinel.textContent = "正在加载更早的视频…";
+      const get = older, have = new Set(items.map((v) => v.bv)); older = null;
+      const rest = (await get()).filter((v) => !have.has(v.bv));
+      if (location.hash !== here || !sentinel.isConnected) return;   // the visitor has moved on
+      sentinel.className = ""; sentinel.textContent = "";
+      if (!rest.length && !items.length) { sentinel.remove(); return none(); }
+      items = items.concat(spread(rest));
+    }
+    grid.insertAdjacentHTML("beforeend", items.slice(n, n + step).map(draw).join("")); n += step; busy = false;
+    grid.dataset.n = Math.min(n, items.length); settle();
+    if (n >= items.length && !older) pager.disconnect();
+    else if (n < want || near()) more();   // catching up, or a short list leaves the end in view and the observer would not fire again
+  };
+  pager = new IntersectionObserver((e) => e[0].isIntersecting && more(), { rootMargin: "800px" });
+  pager.observe(sentinel); more();
+}
+// every collected video of the creators that pass the current switches, for the lists that start from the latest 30 each
+const olderOf = (keep = () => true) => async () => apply((await Promise.all(UPS.filter((u) => u.mid && isOn(u) && tierOK(u) && keep(u)).map(allOf))).flat());
+
+/* ---------- pages ---------- */
+function home() {
+  view.innerHTML = `${filterBar(true, true)}<div class="grid" id="grid"></div>`;
+  paged(apply(FEED), card, 36, olderOf(), true);
+}
+function browse() {
+  const short = P.dur === "short";
+  document.title = (short ? "短视频" : "全部视频") + " - HackerFun";
+  view.innerHTML = `<div class="pagehead"><h2>${short ? "短视频" : "全部视频"}</h2>${short ? `<p class="sub">5 分钟以内的视频，零碎时间看。</p>` : ""}</div>
+    ${filterBar(true, true)}<div class="grid" id="grid"></div>`;
+  paged(apply(FEED), card, 36, olderOf(), true);
+}
+function areaPage(id) {
+  const a = areaById.get(id); if (!a) return notFound();
+  document.title = `${a.name} - HackerFun`;
+  view.innerHTML = `<div class="pagehead"><a class="crumb" href="#/categories">分类</a><h2>${esc(a.name)}</h2></div>
+    <div class="catwrap">${a.subs.map((s) => `<a class="chip" href="#/c/${s.id}">${esc(s.name)}</a>`).join("")}</div>
+    ${filterBar()}<div class="grid" id="grid"></div>`;
+  paged(apply(FEED.filter((v) => v.up.area === a)), card, 36, olderOf((u) => u.area === a), true);
+}
+async function catPage(id) {
+  const s = subById.get(id); if (!s) return notFound();
+  document.title = `${s.name} - HackerFun`;
+  const ups = UPS.filter((u) => u.sub === s);
+  view.innerHTML = `<div class="pagehead"><a class="crumb" href="#/a/${s.area.id}">${esc(s.area.name)}</a><h2>${esc(s.name)}</h2>
+    <p class="sub">${ups.length} 位 UP主的全部视频${topicsOff.includes(s.id) ? "。这个题材现在是关闭的，不会出现在首页和大类页里；可以在「分类」页重新打开。" : ""}</p></div>${ustrip(ups)}
+    ${filterBar()}<div class="grid" id="grid"></div>`;
+  paged(apply(FEED.filter((v) => v.up.sub === s), true, true), card, 36, null, true);
+  const here = location.hash;
+  const all = (await Promise.all(ups.filter((u) => isOn(u) && tierOK(u)).map(allOf))).flat();
+  if (location.hash === here && all.length) { $("#grid") ? $("#grid").innerHTML = "" : 0; if ($("#grid")) paged(apply(all, true, true), card, 36, null, true); }
+}
+function categories() {
+  document.title = "分类 - HackerFun";
+  const nu = (f) => UPS.filter(f).length;
+  view.innerHTML = `<div class="pagehead"><h2>分类</h2><p class="sub">按题材分成两级。每个题材右边有开关：关掉的题材不会出现在首页、短视频和大类页里，点进这个题材本身仍然能看。数字是该题材下的 UP主人数；开关保存在这台设备的浏览器里。</p></div>
+    <div class="catwrap"><a class="pill" href="#/browse">全部视频</a><a class="pill" href="#/browse?dur=short">短视频</a>
+      <a class="pill" href="#/browse?date=week&sort=views">本周最热</a><a class="pill" href="#/browse?dur=xlong">1 小时以上</a></div>
+    <div class="areas">${AREAS.map((a) => `<section class="areacard">
+      <div class="areaname"><a href="#/a/${a.id}">${esc(a.name)}</a><span class="count">${nu((u) => u.area === a)} 位</span>
+        <button class="chip" data-topics="${a.id}" data-to="${a.subs.every((x) => topicsOff.includes(x.id)) ? "on" : "off"}">${a.subs.every((x) => topicsOff.includes(x.id)) ? "全部打开" : "全部关闭"}</button></div>
+      <div class="cats">${a.subs.map((x) => `<div class="catrow ${topicsOff.includes(x.id) ? "off" : ""}"><a href="#/c/${x.id}">${esc(x.name)}<span class="count">${nu((u) => u.sub === x)}</span></a>
+        <label class="switch" title="${topicsOff.includes(x.id) ? "已关闭" : "已打开"}"><input type="checkbox" data-topic="${x.id}" ${topicsOff.includes(x.id) ? "" : "checked"}><span class="knob"></span></label></div>`).join("")}</div>
+    </section>`).join("")}</div>`;
+}
+function upsPage() {
+  document.title = "UP主 - HackerFun";
+  const sw = (u) => `<div class="srowu ${isOn(u) && topicOn(u) ? "" : "off"}">${ava(u)}<a class="grow" href="#/u/${u.id}"><b>${esc(u.n)}</b>
+      <span class="sub">${tierTag(u.t)} · ${fans(u)} · ${esc(u.sub.name)}${u.sv ? " · 短视频为主" : u.total ? " · 长视频为主" : ""}${yrs(u) ? " · " + yrs(u) : ""}${recAt(u) ? " · " + esc(recAt(u)) : ""}${u.total ? ` · ${u.total} 个视频` : u.mid ? " · 视频还在收录中" : " · 还没找到 B站账号"}${topicOn(u) ? "" : " · 题材已关闭"}</span>${two(u)}</a>
+    ${u.x && REPO ? `<a class="chip" target="_blank" rel="noopener" href="https://github.com/${REPO}/issues/new?title=${encodeURIComponent("unsubscribe " + u.mid)}&body=${encodeURIComponent("提交后，这位 UP主会从 HackerFun 移除。")}">移除</a>` : ""}
+    <label class="switch" title="${isOn(u) ? "已订阅" : "已关闭"}"><input type="checkbox" data-sub="${u.id}" ${isOn(u) ? "checked" : ""}><span class="knob"></span></label></div>`;
+  const group = (id, title, hint, list, bulk) => list.length ? `<h3 class="sechead" id="sec-${id}">${title}<span class="count">${list.filter(isOn).length} / ${list.length} 已订阅</span>
+      <span style="flex:1"></span><button class="chip" data-bulk="${bulk}" data-to="on">全部打开</button><button class="chip" data-bulk="${bulk}" data-to="off">全部关闭</button></h3>
+    <p class="sub">${hint}</p>${[...list].sort((a, b) => a.t - b.t || (b.f || 0) - (a.f || 0)).map(sw).join("")}` : "";
+  const picks = UPS.filter((u) => u.k), mine = UPS.filter((u) => u.x), top = UPS.filter((u) => !u.k && !u.x);
+  const pLong = picks.filter((u) => !u.sv), pShort = picks.filter((u) => u.sv);   // sv: at least half of the videos are under five minutes
+  const jump = (id, label, n) => n ? `<button class="chip" data-jump="sec-${id}">${label}<span class="count">${n}</span></button>` : "";
+  view.innerHTML = `<div class="subs"><div class="pagehead"><h2>UP主</h2>
+      <p class="sub">这个网站只收录这份名单里的 UP主：B站 2023、2024、2025 三年的百大（去重后共 181 位${top.length < 181 ? `，已收录 ${top.length} 位，其余还在核对账号` : ""}，每位标了获奖年份），加上百大之外精选的 ${picks.length} 位，分成长视频为主和短视频为主两组。精选名单的来源是 V2EX、知乎、豆瓣等社区里网友公开点名推荐的 UP主，再按深度标准挑选。每位都标了深度星级，并用两句话说明做什么内容、为什么推荐；在这些社区被点名推荐过的（包括百大里的），标了“推荐见 …”。关掉开关，这位 UP主的视频就不再出现在首页和分类里；开关保存在这台设备的浏览器里。</p></div>
+    <div class="filterbar">${jump("picks", "精选 · 长视频", pLong.length)}${jump("shorts", "精选 · 短视频", pShort.length)}${[1, 2, 3].map((t) => jump("t" + t, "百大 " + STAR[t] + " " + TIER[t], top.filter((u) => u.t === t).length)).join("")}${jump("mine", "我添加的", mine.length)}${jump("ext", "站外", HF.ext.length)}</div>
+    ${REPO ? `<h3 class="sechead">添加其他 UP主</h3>
+    <p class="sub">填 B站 UID 或主页链接（例如 space.bilibili.com/946974）。点「添加」会打开 GitHub，你提交那条请求后，这位 UP主的视频会在下一次更新后出现在这里。只有网站主人提交的请求才会生效。</p>
+    <form class="addbox" id="addform"><input id="adduid" placeholder="UID 或 space.bilibili.com/… 链接" autocomplete="off"><button class="pill pri">添加</button></form>
+    <p class="sub" id="addmsg"></p>` : ""}
+    ${group("picks", "精选 · 长视频为主", "不在这三年的百大名单里，B站也不一定是他们的主场。名单主要来自 V2EX、知乎、豆瓣等社区里网友公开点名推荐的 UP主，再按深度标准挑选：有专业深度，能带来知识上的收获。每位标了在哪里被推荐过；没有标的是站长自己选的。", pLong, "kl")}
+    ${group("shorts", "精选 · 短视频为主", "同样不在百大名单里，但一半以上的视频在 5 分钟以内，适合零碎时间看。他们的视频会出现在「短视频」里。", pShort, "ks")}
+    ${group("mine", "我添加的", "你自己加进来的 UP主。", mine, "x")}
+    ${[1, 2, 3].map((t) => group("t" + t, `百大 · ${STAR[t]} ${TIER[t]}`, TIERHINT[t] + "。", top.filter((u) => u.t === t), t)).join("")}
+    ${HF.ext.length ? `<h3 class="sechead" id="sec-ext">站外推荐<span class="count">${HF.ext.length} 个</span></h3>
+    <p class="sub">同样值得看，但没有找到他们在 B站的官方账号，所以这里只给出站外链接，视频不会出现在首页。订阅数为约数。</p>
+    ${HF.ext.map((e) => `<a class="srowu" href="${esc(e.url)}" target="_blank" rel="noopener"><span class="ava" style="background:${grad(e.n)}">${esc(e.n[0])}</span>
+      <span class="grow"><b>${esc(e.n)}</b><span class="sub">${esc(e.p)}${e.f !== "—" ? " · " + esc(e.f) + " 订阅" : ""} · ${esc(e.c.join(" / "))}</span><span class="two why">${esc(e.w)}</span></span></a>`).join("")}` : ""}</div>`;
+  if (REPO) $("#addform").onsubmit = (e) => { e.preventDefault();
+    const m = ($("#adduid").value.match(/space\.bilibili\.com\/(\d+)/) || $("#adduid").value.trim().match(/^(\d{1,20})$/) || [])[1];
+    if (!m) { $("#addmsg").textContent = "没认出 UID。请填纯数字 UID，或者 space.bilibili.com/数字 这样的链接。"; return; }
+    if (upById.has(m)) { $("#addmsg").textContent = `${upById.get(m).n} 已经在列表里了。`; return; }
+    $("#addmsg").textContent = "已打开 GitHub，请在那边点「Submit new issue」。";
+    window.open(`https://github.com/${REPO}/issues/new?title=${encodeURIComponent("subscribe " + m)}&body=${encodeURIComponent("提交后，HackerFun 会开始收录 https://space.bilibili.com/" + m + " 的全部视频。")}`, "_blank", "noopener"); };
+}
+async function creator(id) {
+  const u = upById.get(id); if (!u) return notFound();
+  document.title = `${u.n} - HackerFun`;
+  const head = `<div class="chead">${ava(u)}<div style="min-width:0;flex:1">
+      <h2>${esc(u.n)}</h2>
+      <div class="sub">${fans(u)} · ${u.total || 0} 个视频${u.mid && !u.full ? "（更早的还在补录中）" : ""} · <a href="#/a/${u.area.id}">${esc(u.area.name)}</a> › <a href="#/c/${u.sub.id}">${esc(u.sub.name)}</a>${u.k ? " · 精选（百大之外）" : ""}${u.sv ? " · 短视频为主" : ""}${yrs(u) ? " · " + yrs(u) : ""}${recAt(u) ? " · " + esc(recAt(u)) : ""}</div>
+      <p class="why">${tierTag(u.t)}　${esc(u.d || "")}${esc(u.w)}</p>
+      <div class="pills"><button class="pill ${isOn(u) ? "pri" : ""}" data-subbtn="${u.id}">${isOn(u) ? "已订阅" : "已关闭，点击重新订阅"}</button>
+        <a class="pill" href="${spaceUrl(u)}" target="_blank" rel="noopener">B站主页</a></div>
+    </div></div>`;
+  if (!u.mid) { view.innerHTML = head + `<div class="status">还没有找到 ${esc(u.n)} 的 B站账号，所以没有收录视频。</div>`; return; }
+  view.innerHTML = `${head}${filterBar(false)}<div class="grid" id="grid"></div>`;
+  paged(apply(u.vids, false));
+  const here = location.hash, all = await allOf(u);
+  if (location.hash === here && all.length && $("#grid")) { $("#grid").innerHTML = ""; paged(apply(all, false)); }
+}
+// the player's servers, in the order the embedded player reaches them: connecting before the play button is pressed saves a few round trips
+let warmed = false;
+const warmPlayer = () => { if (warmed) return; warmed = true;
+  ["https://player.bilibili.com", "https://www.bilibili.com", "https://s1.hdslb.com", "https://api.bilibili.com"].forEach((h) => {
+    const l = document.createElement("link"); l.rel = "preconnect"; l.href = h; l.crossOrigin = ""; document.head.append(l);
+    const n = document.createElement("link"); n.rel = "preconnect"; n.href = h; document.head.append(n); }); };
+const doneBtn = (v) => `<button class="pill" data-done="${esc(v.bv)}" title="${isDone(v) ? "点一下改回没看完" : "进度是估算的；看完了但没算上，可以点这里"}">${
+  isDone(v) ? `${CHECK}<span>已看完</span>` : "<span>标记为看完</span>"}</button>`;
+/* Videos only the creator's supporters ("充电专属"), or buyers, can watch in full: Bilibili's embedded player plays a preview
+   and then stops without saying why. The page is not told when that happens either, so it reckons it: the daily update
+   records how long each such video's preview is, and once the video has been playing that long the note appears under
+   the player, with a link to Bilibili. Pausing and seeking are not seen, so the note can be early or late; on a
+   computer a click inside the player (which may be a seek) brings it up at once. */
+let payTimer = 0;
+const payNote = (v) => { const m = Math.floor(v.pv / 60), x = v.pv % 60, upto = v.pv ? `前 ${m ? m + " 分" + (x ? " " + x + " 秒" : "钟") : x + " 秒"}` : "一段";
+  return `<div class="paynote" id="paynote"><span>这是${v.pay === 1 ? "充电专属" : "付费"}视频，这里只能试看${upto}。完整版要在 B站${v.pay === 1 ? "给这位 UP主充电" : "购买"}后才能看。</span>
+    <a class="pill pri" href="https://www.bilibili.com/video/${esc(v.bv)}" target="_blank" rel="noopener">去 B站看完整版</a></div>`; };
+function payWatch(v) {
+  clearInterval(payTimer); if (!v || !v.pay) return;
+  const phone = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent), f = $("#player iframe");
+  const show = () => { clearInterval(payTimer); if (f.isConnected && !$("#paynote")) $("#player").insertAdjacentHTML("afterend", payNote(v)); };
+  if (!v.pv) return show();   // the length of the preview is not known: say it when play is pressed
+  // Bilibili's phone player starts on a tap inside it, which is seen as the player taking the focus; the desktop one starts by itself after loading
+  let started = !phone, played = phone ? 0 : -3;
+  payTimer = setInterval(() => {
+    if (!f.isConnected) return clearInterval(payTimer);
+    const inside = document.activeElement === f;
+    if (!started) { started = inside; return; }
+    if (!phone && inside) return show();
+    if (!document.hidden && (played += 0.5) >= v.pv + 1) show();
+  }, 500);
+}
+/* counting the time the player is open and the page is in front */
+let watching = null;   // { bv, d, base, acc, from, timer }
+function tickWatch() { const w = watching; if (!w) return;
+  if (w.from) w.acc += (Date.now() - w.from) / 1000;
+  w.from = document.hidden ? 0 : Date.now(); }
+function saveWatch() { const w = watching; if (!w) return; tickWatch();
+  const sec = Math.min(w.d, Math.max(w.base, w.acc)), was = isDone(w);
+  if (sec > progOf(w.bv)) setProg(w.bv, sec);
+  const b = document.querySelector(`[data-done="${w.bv}"]`); if (b && was !== isDone(w)) b.outerHTML = doneBtn(w); }
+function startWatch(v) { stopWatch(); if (!v || !v.d) return;
+  // the player needs a few seconds before the video starts
+  watching = { bv: v.bv, d: v.d, base: progOf(v.bv), acc: -3, from: document.hidden ? 0 : Date.now() };
+  watching.timer = setInterval(saveWatch, 5000); }
+function stopWatch() { clearInterval(payTimer); if (!watching) return; saveWatch(); clearInterval(watching.timer); watching = null; }
+document.addEventListener("visibilitychange", tickWatch);
+/* An app added to the home screen comes back as it was left when its icon is tapped. After 3 minutes away it loads
+   afresh, like pulling down to refresh, except while a video is open (up to 30 minutes). Browser tabs are left alone. */
+let hiddenAt = 0;
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) { hiddenAt = Date.now(); return; }
+  const away = hiddenAt ? Date.now() - hiddenAt : 0;
+  if (!matchMedia("(display-mode: standalone)").matches || away < 3 * 60e3 || (watching && away < 30 * 60e3)) return;
+  location.reload();
+});
+addEventListener("pagehide", saveWatch);
+async function watch(bv, uid) {
+  warmPlayer();
+  const u = upById.get(uid) || (feedByBv.get(bv) || {}).up;
+  let v = feedByBv.get(bv) || (seen.concat(later).map(unrec).filter(Boolean).find((x) => x.bv === bv));
+  if (!v && u) v = (await allOf(u)).find((x) => x.bv === bv);
+  if (!v) v = { up: u, bv, t: "", pic: "", d: 0, v: null, p: 0 };
+  if (v.up && v.t) { seen = seen.filter((r) => r.bv !== bv).concat(rec(v)).slice(-200); store.set("hf_seen2", seen); }
+  document.title = `${v.t || bv} - HackerFun`;
+  const same = u ? u.vids.filter((x) => x.bv !== bv) : [];
+  const rel = u ? FEED.filter((x) => x.up !== u && x.up.sub === u.sub && isOn(x.up)).concat(FEED.filter((x) => x.up.area === u.area && x.up.sub !== u.sub && isOn(x.up) && tierOK(x.up))) : FEED.filter((x) => isOn(x.up) && tierOK(x.up));
+  const list = same.slice(0, 8).concat(rel).filter(shownAsNew).slice(0, 24);
+  const on = isLater(bv); shown.set(bv, v);
+  view.innerHTML = `<div class="watch"><div class="primary">
+    <div class="player" id="player"><button class="poster" data-play="${esc(bv)}" aria-label="播放" style="background:${grad(bv)}">
+      ${v.pic ? `<img referrerpolicy="no-referrer" src="${img(v.pic, "1280w_720h_1c")}" alt="" onerror="this.remove()">` : ""}
+      <span class="play"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></button></div>
+    ${!v.cid && /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? `<p class="sub" style="padding-top:8px">这个视频还没补全播放信息，手机上可能播不了；可以点下面的「在 B站打开」。</p>` : ""}
+    <h1>${esc(v.t || "B站视频 " + bv)}</h1>
+    <div class="owner">${u ? `<a class="who" href="#/u/${u.id}">${ava(u)}<span><b>${esc(u.n)}</b><span class="sub">${fans(u)}</span></span></a>` : "<span></span>"}
+      <div class="pills">${v.up && v.t ? `<button class="pill" data-later="${esc(bv)}">${on ? CHECK : CLOCK}<span>${on ? "已加入稍后再看" : "稍后再看"}</span></button>` : ""}
+        ${v.d ? doneBtn(v) : ""}
+        <a class="pill" href="https://www.bilibili.com/video/${esc(bv)}" target="_blank" rel="noopener">在 B站打开</a></div></div>
+    ${u ? `<div class="desc"><div class="top-line">${meta(v)}</div>
+      <p class="why">${tierTag(u.t)}　${esc(u.w)}</p>
+      <div class="tags"><a class="tag" href="#/a/${u.area.id}">${esc(u.area.name)}</a><a class="tag" href="#/c/${u.sub.id}">${esc(u.sub.name)}</a></div></div>` : ""}
+  </div><div class="secondary"><h3>接下来</h3>${list.map(next).join("")}</div></div>`;
+}
+async function search(q) {
+  q = decodeURIComponent(q || "").trim(); $("#q").value = q;
+  document.title = `${q} - HackerFun`;
+  const k = q.toLowerCase(), hit = (s) => String(s || "").toLowerCase().includes(k), here = location.hash;
+  const us = UPS.filter((u) => hit(u.n) || hit(u.sub.name) || hit(u.area.name) || hit(u.w) || hit(u.d));
+  const match = (list) => list.filter((v) => hit(v.t) || hit(v.up.n)).sort((a, b) => b.p - a.p);
+  // the page starts with the latest 30 videos of each creator, so those are searched at once;
+  // the complete lists are fetched on the first search and kept for the following ones
+  const draw = (vs, done) => {
+    view.innerHTML = `<div class="pagehead"><h2>"${esc(q)}"</h2><p class="sub">${us.length} 位 UP主 · ${vs.length} 个视频${done ? "" : "（先显示最近的，正在搜索全部视频…）"}</p></div>
+      ${us.length ? `<div class="ugrid" style="padding-top:12px">${[...us].sort((a, b) => a.t - b.t || (b.f || 0) - (a.f || 0)).slice(0, 12).map(urow).join("")}</div>` : ""}
+      <div class="results" id="grid"></div>`;
+    if (vs.length) paged(vs, row, 20);
+    else if (!us.length && done) $("#grid").outerHTML = `<div class="status">没有找到相关内容。</div>`; else $("#grid").remove();
+  };
+  const withFile = UPS.filter((u) => u.mid), ready = withFile.every((u) => full.has(u.id));
+  if (!ready) draw(match(FEED), false);
+  const all = (await Promise.all(withFile.map(allOf))).flat();
+  if (location.hash !== here) return;                 // the visitor has moved on
+  const y = scrollY; draw(match(all), true); if (!ready) scrollTo(0, y);
+}
+const meTabs = (on) => `<a class="chip ${on === "later" ? "on" : ""}" href="#/later">稍后再看<span class="count">${later.length}</span></a>
+      <a class="chip ${on === "seen" ? "on" : ""}" href="#/history">历史记录<span class="count">${seen.length}</span></a>
+      <a class="chip ${on === "settings" ? "on" : ""}" href="#/settings">设置</a>`;
+function settingsPage() {
+  document.title = "设置 - HackerFun";
+  view.innerHTML = `<div class="pagehead"><h2>我的</h2></div>
+    <div class="filterbar">${meTabs("settings")}</div>
+    <div class="setting"><div><b>隐藏联合投稿</b>
+        <p>B站的一个视频可以由几个账号联合投稿。比如名单里的某位 UP主去别人的节目做嘉宾，视频是对方的账号发布的，但也会出现在这位 UP主的投稿列表里。</p>
+        <p><b>关闭</b>（默认）：别的账号发布、他只是参与的视频也会显示，卡片上标“联合投稿”。<br><b>打开</b>：只显示名单里的 UP主用自己账号发布的视频。</p></div>
+      <label class="switch" title="${ownOnly ? "已打开" : "已关闭"}"><input type="checkbox" data-own ${ownOnly ? "checked" : ""}><span class="knob"></span></label></div>
+    <div class="setting"><div><b>隐藏看完的视频</b>
+        <p><b>打开</b>（默认）：看完的视频不再出现在首页、短视频、分类和「接下来」里。在 UP主页、搜索和历史记录里仍然找得到，封面上标着“已看完”。<br><b>关闭</b>：看完的也照常出现。</p>
+        <p>播放进度是估算的，封面下方的进度条也是。B站的播放器不把播放到哪里告诉本站，所以从点播放开始，按播放页停留在前台的时间计算；暂停、拖动进度条、倍速播放都算不准。看到 90% 算看完。估错了，可以在播放页点「标记为看完」或「已看完」来改。</p></div>
+      <label class="switch" title="${hideDone ? "已打开" : "已关闭"}"><input type="checkbox" data-hidedone ${hideDone ? "checked" : ""}><span class="knob"></span></label></div>
+    <div class="setting"><div><b>不想看的视频</b>
+        <p>在首页、短视频、分类页或播放页的「接下来」里长按一个视频（电脑上按住鼠标不放），可以选“不看这个视频”或“不看这位 UP主”。之后它们不再出现在这些列表里；在 UP主页和搜索里仍然找得到。</p>
+        <p>现在隐藏了 ${hidden.size} 个视频。被关掉的 UP主可以在<a href="#/ups" style="text-decoration:underline">「UP主」</a>页重新打开。</p></div>
+      ${hidden.size ? `<button class="pill" data-unhideall>全部恢复</button>` : ""}</div>
+    <p class="sub" style="padding-top:16px">设置保存在这台设备的浏览器里。想隐藏某类题材，到<a href="#/categories" style="text-decoration:underline">「分类」</a>页关掉它；想隐藏某位 UP主，到<a href="#/ups" style="text-decoration:underline">「UP主」</a>页关掉他。</p>`;
+}
+function listPage(title, blurb, recs, clearKey) {
+  document.title = `${title} - HackerFun`;
+  const vs = recs.map(unrec).filter(Boolean).reverse();
+  view.innerHTML = `<div class="pagehead"><h2>我的</h2></div>
+    <div class="filterbar">${meTabs(clearKey)}
+      <span class="grow"></span>${vs.length ? `<button class="pill" data-clear="${clearKey}">清空${title}</button>` : ""}</div>
+    <p class="sub" style="padding-top:12px">${blurb}</p><div class="results" id="grid"></div>`;
+  if (vs.length) paged(vs, row, 20); else $("#grid").outerHTML = `<div class="status">这里还是空的。</div>`;
+}
+function about() {
+  document.title = "关于 - HackerFun";
+  const c = (t) => UPS.filter((u) => u.t === t).length, total = UPS.reduce((s, u) => s + (u.total || 0), 0);
+  view.innerHTML = `<article class="about"><h1>Hacker<span style="color:var(--accent)">Fun</span></h1>
+    <p class="lede">给对输入有要求的人看的 B站：只收录一份名单里的 UP主，每位都标了深度星级。</p>
+    <div class="stats"><div class="stat"><b>${UPS.length}</b><span>位 UP主</span></div><div class="stat"><b>${num(total)}</b><span>个视频</span></div>
+      <div class="stat"><b>${subById.size}</b><span>个细分，归入 ${AREAS.length} 个大类</span></div><div class="stat"><b>${ago(HF.updated)}</b><span>数据更新</span></div></div>
+    <h2>这是什么</h2>
+    <p>名单有两部分：哔哩哔哩 2023、2024、2025 三个年度的百大UP主（去重，每位标了获奖年份），加上百大之外精选的 ${UPS.filter((u) => u.k).length} 位。后者不一定以 B站为主场，但有专业深度，看完能带来知识上的收获，而不只是消遣。</p>
+    <p>精选名单是怎么来的：人气榜选不出口碑，所以我们去看有人明确推荐的地方。V2EX、知乎、豆瓣、少数派、LINUX DO 等社区里常有“有哪些值得关注的 UP主”这类讨论，被网友点名推荐的 UP主是候选，再按深度标准挑选。每位 UP主（包括百大里的）如果在这些地方被点名推荐过，名单上会标“推荐见 V2EX、知乎”等字样；不看粉丝数、播放量、收藏和投币。</p>
+    <h2>深度星级</h2>
+    <ul><li><b>★★★ 深度</b>（${c(1)} 位）：博主本人功底很深，讲什么题材都有深度和质感。标准很高，只给少数人。</li>
+      <li><b>★★ 有料</b>（${c(2)} 位）：有信息量、做得认真，以讲解、测评或教学为主。</li>
+      <li><b>★ 消遣</b>（${c(3)} 位）：以娱乐消遣为主。</li></ul>
+    <p>星级是个人判断，看的是深度，不是人气。默认只显示三星和二星，视频列表上方的三个星级按钮可以随时开关。</p>
+    <h2>怎么用</h2>
+    <ul><li><b>首页</b>：名单里所有打开的 UP主的视频，最新的在前。</li>
+      <li><b>筛选</b>：视频列表上方有一排下拉菜单，按分类、发布时间、时长、星级筛，也可以改成按播放量排序。分类、时长、星级可以同时选几项。</li>
+      <li><b>分类</b>：${AREAS.length} 个大类、${subById.size} 个题材。不感兴趣的题材可以整个关掉；题材页面和 UP主页面能翻到全部历史视频。</li>
+      <li><b>UP主</b>：完整名单，每位两句话说明做什么内容、为什么推荐；不想看的可以关掉。</li>
+      <li><b>我的</b>：稍后再看和历史记录。</li></ul>
+    <h2>数据说明</h2>
+    <p>视频列表和播放量来自 B站公开接口，每天自动更新一次，粉丝数每周更新一次。每个地址每天只问一次，B站不给就等第二天，所以个别 UP主的新视频可能晚一两天出现。首页、大类和搜索只包含每位 UP主最近的 30 个视频。默认只显示名单里的 UP主本人发布的视频；别的账号发布、他们只是参与的联合投稿，要在「筛选」里关掉「只看本人投稿」或用搜索才会出现。视频通过 B站官方外链播放器播放（带弹幕），版权归原作者；外链播放器画质有限，想看高清可点「在 B站打开」。</p>
+    <h2>声明</h2>
+    <p>HackerFun 是个人做的非官方、非商业网站，与哔哩哔哩及名单中的 UP主没有任何关联，也不代表他们的立场。这里不存储、不转载任何视频，所有视频都在 B站播放，封面、标题和头像的版权归 B站和原作者所有。深度星级只是个人口味，不是对创作者的评价。</p>
+    <p>如果你是版权方或名单中的创作者，希望这里不再展示你的内容，请写信到 <a href="mailto:contact@hackerfun.org" style="color:var(--link)">contact@hackerfun.org</a>，会尽快处理。</p></article>`;
+}
+function notFound() { view.innerHTML = `<div class="status">没有找到这个页面。<a href="#/" style="color:var(--link)">回首页</a></div>`; }
+
+/* ---------- sidebar + router ---------- */
+const I = {
+  home: "M4 21V10.08l8-6.96 8 6.96V21h-6v-6h-4v6H4z",
+  shorts: "M13 2 4 14h6l-1 8 9-12h-6l1-8z",
+  categories: "M4 4h7v7H4zm2 2v3h3V6zm7-2h7v7h-7zm2 2v3h3V6zM4 13h7v7H4zm2 2v3h3v-3zm7-2h7v7h-7zm2 2v3h3v-3z",
+  ups: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-3.33 0-8 1.67-8 5v1h16v-1c0-3.33-4.67-5-8-5z",
+  subs: "M4 6h16v2H4zm2-3h12v2H6zm14 7H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2zm-10 9.5v-7l6 3.5-6 3.5z",
+  ext: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 6h-2.95a15.6 15.6 0 0 0-1.38-3.56A8 8 0 0 1 18.9 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14a8.2 8.2 0 0 1 0-4h3.38a16.5 16.5 0 0 0 0 4H4.26zm.84 2h2.95c.32 1.25.78 2.45 1.38 3.56A8 8 0 0 1 5.1 16zm2.95-8H5.1a8 8 0 0 1 4.33-3.56A15.6 15.6 0 0 0 8.05 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66a14.7 14.7 0 0 1 0-4h4.68a14.7 14.7 0 0 1 0 4zm.23 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95a8 8 0 0 1-4.33 3.56zM16.36 14a16.5 16.5 0 0 0 0-4h3.38a8.2 8.2 0 0 1 0 4h-3.38z",
+  later: "M14.97 16.95 10 13.87V7h2v5.76l4.03 2.49-1.06 1.7zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z",
+  me: "M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8 12.5v-9l6 4.5-6 4.5z",
+  history: "M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z",
+};
+const NAV = [["home", "#/", "首页"], ["shorts", "#/browse?dur=short", "短视频"], ["categories", "#/categories", "分类"], ["ups", "#/ups", "UP主"], ["me", "#/later", "我的"]];
+function sidebar(active) {
+  $("#side").innerHTML = NAV.map(([k, h, t]) => `<a href="${h}" class="${active === k ? "on" : ""}"><svg viewBox="0 0 24 24"><path d="${I[k]}"/></svg><span>${t}</span></a>`).join("")
+    + `<div class="areas-nav"><hr><h4>分类</h4>${AREAS.map((a) => `<a class="area ${active === "a:" + a.id ? "on" : ""}" href="#/a/${a.id}"><span>${esc(a.name)}</span><span class="count">${UPS.filter((u) => u.area === a).length}</span></a>`).join("")}
+      <hr><div class="foot">数据更新于 ${ago(HF.updated)}<br>每天自动更新一次</div></div>`;
+}
+function route() {
+  if (!HF) return;
+  stopWatch();
+  const [pathPart, qs = ""] = (location.hash.replace(/^#/, "") || "/").split("?");
+  const [, p, arg, arg2] = pathPart.split("/");
+  PATH = pathPart; const q = new URLSearchParams(qs);
+  if (/^[\w.-]+\/[\w.-]+$/.test(q.get("repo") || "")) { REPO = q.get("repo"); store.set("hf_repo", REPO); } P = Object.fromEntries(KEYS.map((k) => [k, q.get(k) || ""]));
+  document.title = "HackerFun"; document.body.classList.remove("drawer"); document.body.classList.toggle("watching", p === "watch"); shown.clear();
+  if (p !== "search") $("#q").value = "";
+  let active = p || "home";
+  if (p === "browse") active = P.dur === "short" ? "shorts" : "categories";
+  if (p === "a") active = "a:" + arg;
+  if (p === "c") active = "a:" + (subById.get(arg)?.area.id || "");
+  if (p === "u" || p === "subs" || p === "ext") active = "ups";
+  if (p === "later" || p === "history" || p === "me" || p === "settings") active = "me";
+  sidebar(active);
+  ({ "": home, browse, categories, ups: upsPage, subs: upsPage, ext: upsPage, about,
+     a: () => areaPage(arg), c: () => catPage(arg), u: () => creator(arg), watch: () => watch(arg, arg2), search: () => search(arg),
+     me: () => listPage("稍后再看", "你存下来打算看的视频，保存在这台设备的浏览器里。", later, "later"),
+     later: () => listPage("稍后再看", "你存下来打算看的视频，保存在这台设备的浏览器里。", later, "later"),
+     settings: settingsPage,
+     history: () => listPage("历史记录", "你在这里点开过的视频，保存在这台设备的浏览器里。", seen, "seen") }[p || ""] || notFound)();
+  page = p === "search" ? "/search" : pathPart; track();
+}
+/* visitor statistics (GoatCounter and Umami): one count per page opened; changing filters on the same page does not count again */
+let page = null, tracked = null, trackedU = null;
+function track() {   // each counter gets one count per page opened; search words are not recorded
+  if (!page) return;
+  const title = page === "/search" ? "搜索 - HackerFun" : document.title;
+  if (page !== tracked && window.goatcounter && window.goatcounter.count) { tracked = page; window.goatcounter.count({ path: page, title }); }
+  if (page !== trackedU && window.umami && window.umami.track) { trackedU = page; window.umami.track((props) => ({ ...props, url: page, title })); }
+}
+window.hfTrack = track;   // called once the counter script has loaded, for the page already open
+/* Going back (or forward) to a page returns to where it was left: the list draws as many videos as it had, then scrolls there.
+   A link opens its page at the top as before. */
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+const places = new Map();   // address -> { y: scroll position, n: videos drawn }
+const placeNow = () => ({ y: scrollY, n: +(($("#grid") || {}).dataset || {}).n || 0 });
+let lastPath = null, lastHash = location.hash || "#/", linkAt = 0;
+document.addEventListener("click", (e) => { if (e.target.closest('a[href^="#"]')) linkAt = Date.now(); }, true);
+function settle() { if (back) scrollTo(0, back.y); }
+["wheel", "touchstart", "keydown", "pointerdown"].forEach((t) => addEventListener(t, () => { back = null; }, { passive: true, capture: true }));   // the visitor takes over
+addEventListener("hashchange", () => {
+  places.set(lastHash, placeNow());
+  const here = location.hash || "#/", path = here.split("?")[0];
+  const fromLink = Date.now() - linkAt < 1000; linkAt = 0;
+  back = fromLink ? null : places.get(here) || null;   // not from a link: the back or forward button
+  if (path !== lastPath) { if (!back) window.scrollTo(0, 0); openMenu = ""; }
+  lastPath = path; lastHash = here; route(); settle();
+});
+const rerender = () => { back = placeNow(); route(); settle(); };
+new MutationObserver(placeMenu).observe(view, { childList: true });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && openMenu) { openMenu = ""; rerender(); } });
+
+/* ---------- long press on a video: not this video, or not this creator ---------- */
+const LIVE = '[data-live] a[href^="#/watch/"], .secondary a.next';
+function cardMenu(a, x, y) {
+  const [, , bv, uid] = a.getAttribute("href").split("/"), v = shown.get(bv), u = upById.get(uid); if (!v || !u || $("#cmenu")) return;
+  document.body.insertAdjacentHTML("beforeend", `<div class="cmenu-back" id="cmenu"><div class="cmenu" role="menu">
+    <div class="cm-title">${esc(v.t)}</div>
+    <button role="menuitem" data-markdone="${esc(bv)}">${isDone(v) ? "改回没看完" : "标记为看完"}</button>
+    <button role="menuitem" data-hidev="${esc(bv)}">不看这个视频</button>
+    <button role="menuitem" data-hideup="${esc(u.id)}">不看「${esc(u.n)}」的视频</button></div></div>`);
+  const m = $("#cmenu .cmenu"), w = document.documentElement.clientWidth, h = innerHeight;
+  m.style.left = Math.max(12, Math.min(x - 20, w - m.offsetWidth - 12)) + "px";
+  m.style.top = Math.max(12, Math.min(y - 20, h - m.offsetHeight - 12)) + "px";
+  if (navigator.vibrate) try { navigator.vibrate(10); } catch (e) {}
+}
+let toastTimer = 0, undo = null;
+function toast(text, back) {
+  clearTimeout(toastTimer); ($("#toast") || {}).remove?.(); undo = back;
+  document.body.insertAdjacentHTML("beforeend", `<div class="toast" id="toast" role="status"><span>${esc(text)}</span><button data-undo>撤销</button></div>`);
+  toastTimer = setTimeout(() => { ($("#toast") || {}).remove?.(); undo = null; }, 7000);
+}
+const dropCards = (sel) => document.querySelectorAll(sel).forEach((a) => a.remove());
+let press = 0, pressAt = null, held = false, touch = false, swallow = 0;
+const endPress = () => { clearTimeout(press); press = 0; };
+document.addEventListener("pointerdown", (e) => {
+  endPress(); touch = e.pointerType !== "mouse";
+  const a = e.target.closest(LIVE); if (!a || e.button || e.target.closest("[data-later]")) return;
+  pressAt = [e.clientX, e.clientY];
+  press = setTimeout(() => { press = 0; held = true; cardMenu(a, pressAt[0], pressAt[1]); }, 500);
+});
+document.addEventListener("pointermove", (e) => { if (press && Math.hypot(e.clientX - pressAt[0], e.clientY - pressAt[1]) > 10) endPress(); });
+document.addEventListener("pointerup", () => { endPress(); if (held) { held = false; swallow = Date.now() + 400; } });
+document.addEventListener("pointercancel", () => { endPress(); held = false; });
+addEventListener("scroll", endPress, { passive: true });
+// the click that ends the press must neither open the video nor close the menu that has just appeared
+document.addEventListener("click", (e) => { if (Date.now() < swallow) { swallow = 0; e.preventDefault(); e.stopPropagation(); } }, true);
+// on Android a long press on a link asks for the browser's own menu: ours takes its place
+document.addEventListener("contextmenu", (e) => { const a = touch && e.target.closest(LIVE); if (!a) return;
+  e.preventDefault(); endPress(); held = true; cardMenu(a, e.clientX || (pressAt || [0])[0], e.clientY || (pressAt || [0, 0])[1]); });
+
+/* ---------- events ---------- */
+document.addEventListener("click", (e) => {
+  const cm = $("#cmenu");
+  if (cm) { const hv = e.target.closest("[data-hidev]"), hu = e.target.closest("[data-hideup]"), md = e.target.closest("[data-markdone]"); cm.remove(); e.preventDefault();
+    if (md) { const bv = md.dataset.markdone, v = shown.get(bv); if (!v) return;   // seen somewhere else: counts as finished, like the button on the watch page
+      const was = progOf(bv), done = !isDone(v); setProg(bv, done ? v.d || 1 : 0);
+      if (done && hideDone) dropCards(`[data-live] a[href^="#/watch/${bv}/"], .secondary a.next[href^="#/watch/${bv}/"]`); else rerender();
+      toast(done ? "已标记为看完" : "已改回没看完", () => setProg(bv, was)); }
+    else if (hv) { const bv = hv.dataset.hidev; hidden.add(bv); saveHidden(); dropCards(`[data-live] a[href^="#/watch/${bv}/"], .secondary a.next[href^="#/watch/${bv}/"]`);
+      toast("已隐藏这个视频", () => { hidden.delete(bv); saveHidden(); }); }
+    else if (hu) { const id = hu.dataset.hideup, u = upById.get(id); if (!off.includes(id)) { off = off.concat(id); store.set("hf_off", off); }
+      dropCards(`[data-live] a[href^="#/watch/"][href$="/${id}"], .secondary a.next[href$="/${id}"]`);
+      toast(`不再显示「${u ? u.n : ""}」的视频`, () => { off = off.filter((x) => x !== id); store.set("hf_off", off); }); }
+    return; }
+  if (e.target.closest("[data-undo]")) { const back = undo; clearTimeout(toastTimer); $("#toast").remove(); undo = null; if (back) { back(); rerender(); } return; }
+  if (e.target.closest("[data-unhideall]")) { hidden = new Set(); saveHidden(); rerender(); return; }
+  const l = e.target.closest("[data-later]");
+  if (l) { e.preventDefault(); const bv = l.dataset.later, v = shown.get(bv);
+    if (isLater(bv)) later = later.filter((r) => r.bv !== bv); else if (v) later = later.concat(rec(v)).slice(-300);
+    store.set("hf_later2", later); const on = isLater(bv);
+    if (l.classList.contains("pill")) l.innerHTML = `${on ? CHECK : CLOCK}<span>${on ? "已加入稍后再看" : "稍后再看"}</span>`;
+    else { l.classList.toggle("on", on); l.innerHTML = on ? CHECK : CLOCK; }
+    return; }
+  const pl = e.target.closest("[data-play]");
+  if (pl) { const bv = pl.dataset.play, av = aid(bv), cid = (shown.get(bv) || {}).cid;
+    // the same address Bilibili's own "embed code" button produces, plus autoplay and danmaku.
+    // On a phone that address redirects to www.bilibili.com, so the permissions are granted to any origin ("*"):
+    // by default they only reach the origin in src, and the fullscreen button then does nothing.
+    $("#player").innerHTML = `<iframe src="https://player.bilibili.com/player.html?isOutside=true${av ? "&aid=" + av : ""}&bvid=${encodeURIComponent(bv)}${cid ? "&cid=" + cid : ""}&p=1&autoplay=1&danmaku=1"
+      scrolling="no" allow="autoplay *; fullscreen *; picture-in-picture *" allowfullscreen title="Bilibili 播放器"></iframe>`;
+    startWatch(shown.get(bv)); payWatch(shown.get(bv)); return; }
+  const dn = e.target.closest("[data-done]");
+  if (dn) { const v = shown.get(dn.dataset.done); if (!v) return;
+    const done = !isDone(v); setProg(v.bv, done ? v.d : 0);
+    if (watching && watching.bv === v.bv) Object.assign(watching, { base: done ? v.d : 0, acc: 0, from: document.hidden ? 0 : Date.now() });   // counting starts again from here
+    dn.outerHTML = doneBtn(v); return; }
+  // filter dropdowns
+  if (openMenu && !e.target.closest(".ddwrap")) { openMenu = ""; const m = $("#ddmenu"); if (m) m.remove();   // a click elsewhere closes the dropdown, then does its own job
+    document.querySelectorAll(".pill.dd.open").forEach((b) => { b.classList.remove("open"); b.setAttribute("aria-expanded", "false"); }); }
+  const mb = e.target.closest("[data-menu]");
+  if (mb) { openMenu = openMenu === mb.dataset.menu ? "" : mb.dataset.menu; menuScroll = 0;
+    if (openMenu === "cat") AREAS.forEach((a) => { if (a.subs.some((x) => multi("cat").includes(x.id))) catExp.add(a.id); });   // show what is ticked
+    rerender(); return; }
+  const inMenu = e.target.closest("#ddmenu");
+  if (inMenu) menuScroll = inMenu.scrollTop;
+  const ex = e.target.closest("[data-exp]");
+  if (ex) { catExp.has(ex.dataset.exp) ? catExp.delete(ex.dataset.exp) : catExp.add(ex.dataset.exp); rerender(); return; }
+  const ma = e.target.closest("#ddmenu a");
+  if (ma) { if (ma.dataset.area) catExp.add(ma.dataset.area);            // ticking an area unfolds its sub-categories
+    if (!("keep" in ma.dataset)) { openMenu = ""; if (ma.getAttribute("href") === (location.hash || "#/")) rerender(); }   // one choice only: close
+    return; }
+  if (e.target.closest("[data-hidedone]")) { hideDone = !hideDone; store.set("hf_hidedone", hideDone); rerender(); return; }
+  if (e.target.closest("[data-own]")) { ownOnly = !ownOnly; store.set("hf_own", ownOnly); rerender(); return; }
+  const t = e.target.closest("[data-tier]");
+  if (t) { const n = +t.dataset.tier, now = tiersNow(), next = now.includes(n) ? now.filter((x) => x !== n) : now.concat(n);
+    if (next.length) { if (onShorts()) { shortTiers = next; store.set("hf_stiers", next); } else { tiers = next; store.set("hf_tiers", next); } rerender(); }   // at least one level stays on
+    return; }
+  const s = e.target.closest("[data-usort]");
+  if (s) { store.set("hf_usort", s.dataset.usort); rerender(); return; }
+  const sb = e.target.closest("[data-subbtn]");
+  if (sb) { const id = sb.dataset.subbtn; off = off.includes(id) ? off.filter((x) => x !== id) : off.concat(id); store.set("hf_off", off); rerender(); return; }
+  const b = e.target.closest("[data-bulk]");
+  if (b) { const g = b.dataset.bulk, ids = UPS.filter((u) => g === "kl" ? u.k && !u.sv : g === "ks" ? u.k && u.sv : g === "x" ? u.x : !u.k && !u.x && u.t === +g).map((u) => u.id);
+    off = off.filter((x) => !ids.includes(x)).concat(b.dataset.to === "off" ? ids : []); store.set("hf_off", off); rerender(); return; }
+  const tps = e.target.closest("[data-topics]");
+  if (tps) { const ids = areaById.get(tps.dataset.topics).subs.map((x) => x.id);
+    topicsOff = topicsOff.filter((x) => !ids.includes(x)).concat(tps.dataset.to === "off" ? ids : []); store.set("hf_topics", topicsOff); rerender(); return; }
+  const jmp = e.target.closest("[data-jump]");
+  if (jmp) { const el = document.getElementById(jmp.dataset.jump); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 72, behavior: "smooth" }); return; }
+  const c = e.target.closest("[data-clear]");
+  if (c) { if (c.dataset.clear === "later") { later = []; store.set("hf_later2", later); } else { seen = []; store.set("hf_seen2", seen); } rerender(); }
+});
+document.addEventListener("change", (e) => {
+  const tp = e.target.closest("[data-topic]");
+  if (tp) { const id = tp.dataset.topic; topicsOff = tp.checked ? topicsOff.filter((x) => x !== id) : topicsOff.filter((x) => x !== id).concat(id);
+    store.set("hf_topics", topicsOff); rerender(); return; }
+  const s = e.target.closest("[data-sub]"); if (!s) return;
+  const id = s.dataset.sub; off = s.checked ? off.filter((x) => x !== id) : off.filter((x) => x !== id).concat(id);
+  store.set("hf_off", off); rerender();
+});
+$("#search").addEventListener("submit", (e) => { e.preventDefault(); const q = $("#q").value.trim(); linkAt = Date.now(); if (q) location.hash = "#/search/" + encodeURIComponent(q); });
+document.addEventListener("keydown", (e) => { if (e.key === "/" && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); $("#q").focus(); } });
+if (store.get("hf_collapsed", false)) document.body.classList.add("collapsed");
+$("#menu").onclick = () => { if (innerWidth <= 800 || document.body.classList.contains("watching")) document.body.classList.toggle("drawer");
+  else store.set("hf_collapsed", document.body.classList.toggle("collapsed")); };
+$("#scrim").onclick = () => document.body.classList.remove("drawer");
+const th = store.get("hf_theme", null); if (th) document.documentElement.dataset.theme = th;
+$("#theme").onclick = () => { const cur = document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const n = cur === "dark" ? "light" : "dark"; document.documentElement.dataset.theme = n; store.set("hf_theme", n); };
+lastPath = location.hash.split("?")[0];
+boot().catch(() => { view.innerHTML = `<div class="status">数据加载失败，请刷新重试。</div>`; });
+})();
+</script>
+<!-- Umami: automatic counting is off because the pages are hash routes; track() above reports each page -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="d715d390-ddc9-4fbf-8d52-c0640e8c2045" data-auto-track="false" onload="window.hfTrack && hfTrack()"></script>
+<script>window.goatcounter = { no_onload: true };</script>
+<script data-goatcounter="https://hackerfun.goatcounter.com/count" async src="https://gc.zgo.at/count.js" onload="window.hfTrack && hfTrack()"></script>
+</body>
+</html>
